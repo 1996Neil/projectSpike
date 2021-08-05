@@ -1,6 +1,7 @@
 package com.example.myspikefuntation.mbg.mapper;
 
 import com.example.myspikefuntation.mbg.dao.dataObject.ItemStockDO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -55,4 +56,5 @@ public interface ItemStockDOMapper {
 
     ItemStockDO selectByItemId(Integer itemId);
 
+    int decreaseStock(@Param("itemId") Integer itemId, @Param("amount")Integer amount);
 }

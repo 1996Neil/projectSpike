@@ -38,4 +38,13 @@ public interface ItemService {
      * @return  com.example.myspikefuntation.service.model.ItemModel
      **/
     ItemModel getItemById(Integer itemId);
+    /**
+     * 扣减商品库存
+     * @Date 0:00 2021/8/6
+     * @param itemId
+     * @param amount 商品数量
+     * @return  boolean
+     * @throws BusinessException
+     **/
+    boolean decreaseStock(Integer itemId,Integer amount)throws BusinessException;
 }

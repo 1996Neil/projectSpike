@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @Data
 public class OrderModel {
     /**
-     * 商品编码
+     * 交易流水号
      **/
     private String id;
     /**

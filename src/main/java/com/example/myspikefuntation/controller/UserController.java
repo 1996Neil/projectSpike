@@ -88,7 +88,7 @@ public class UserController extends BaseController {
     @RequestMapping("/get/{userId}")
     public CommonResultType home(@PathVariable Integer userId) throws BusinessException {
         //调用service服务获取对应id的用户对象并返回给前端
-        UserModel userModel = userService.getId(userId);
+        UserModel userModel = userService.getUserById(userId);
         if (userModel == null) {
             //会抛到Tomcat容器层,而Tomcat无法处理,只能抛出500错误,所以要定义ExceptionHandler
             //测试未知错误

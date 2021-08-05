@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
      * @Date 22:45 2021/8/3
      **/
     @Override
-    public UserModel getId(Integer userId) {
+    public UserModel getUserById(Integer userId) {
         UserDO userDO = userDOMapper.selectByPrimaryKey(userId);
         if (userDO == null) {
             return null;

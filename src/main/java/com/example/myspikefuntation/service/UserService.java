@@ -18,7 +18,7 @@ public interface UserService {
      * @param userId
      * @return  com.example.myspikefuntation.service.model.UserModel
      **/
-    public UserModel getId(Integer userId);
+    public UserModel getUserById(Integer userId);
 
     /**
      * 用户注册流程
