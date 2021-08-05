@@ -52,4 +52,7 @@ public interface ItemStockDOMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(ItemStockDO record);
+
+    ItemStockDO selectByItemId(Integer itemId);
+
 }

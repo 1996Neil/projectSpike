@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -84,7 +85,22 @@ public class ItemServiceImpl implements ItemService {
         if (itemId==null) {
             return null;
         }
+        ItemDO itemDO = itemDOMapper.selectByPrimaryKey(itemId);
+        if (itemDO==null) {
+            return null;
+        }
+        //操作获得库存方法
+        ItemStockDO itemStockDO = itemStockDOMapper.selectByItemId(itemId);
+        //将dataObject转化成itemModel
+        ItemModel itemModel = covertFromDataObject(itemDO, itemStockDO);
+        return itemModel;
+    }
 
-        return null;
+    private ItemModel covertFromDataObject(ItemDO itemDO,ItemStockDO itemStockDO){
+        ItemModel itemModel = new ItemModel();
+        BeanUtils.copyProperties(itemDO,itemModel);
+        itemModel.setPrice(new BigDecimal(itemDO.getPrice()));
+        itemModel.setStock(itemStockDO.getStock());
+        return itemModel;
     }
 }
