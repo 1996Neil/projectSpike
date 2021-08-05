@@ -8,7 +8,6 @@ import com.example.myspikefuntation.mbg.mapper.ItemDOMapper;
 import com.example.myspikefuntation.mbg.mapper.ItemStockDOMapper;
 import com.example.myspikefuntation.service.ItemService;
 import com.example.myspikefuntation.service.model.ItemModel;
-import com.example.myspikefuntation.service.model.UserModel;
 import com.example.myspikefuntation.validator.ValidatorImpl;
 import com.example.myspikefuntation.validator.ValidatorResult;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wangzhe
@@ -37,13 +37,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ItemStockDOMapper itemStockDOMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ItemModel createItem(ItemModel itemModel) throws BusinessException {
         //校验入参
         ValidatorResult result = validator.validate(itemModel);
         if (result.isHasErrors()) {
-            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,result.getErrMsg());
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, result.getErrMsg());
         }
         //转化itemModel->dataObject
         ItemDO itemDO = this.convertFromItemModel(itemModel);
@@ -55,18 +56,19 @@ public class ItemServiceImpl implements ItemService {
         //返回创建完成的对象
         return this.getItemById(itemModel.getId());
     }
-    private ItemDO convertFromItemModel(ItemModel itemModel){
-        if (itemModel==null) {
+
+    private ItemDO convertFromItemModel(ItemModel itemModel) {
+        if (itemModel == null) {
             return null;
         }
         ItemDO itemDO = new ItemDO();
-        BeanUtils.copyProperties(itemModel,itemDO);
+        BeanUtils.copyProperties(itemModel, itemDO);
         itemDO.setPrice(itemModel.getPrice().doubleValue());
         return itemDO;
     }
 
-    private ItemStockDO convertStockFromItemModel(ItemModel itemModel){
-        if (itemModel==null) {
+    private ItemStockDO convertStockFromItemModel(ItemModel itemModel) {
+        if (itemModel == null) {
             return null;
         }
         ItemStockDO itemStockDO = new ItemStockDO();
@@ -77,16 +79,23 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemModel> listItem() {
-        return null;
+        List<ItemDO> itemDOS = itemDOMapper.listItem();
+        //将每一个itemDO映射成itemModel,这个方法可以好好学一下
+        List<ItemModel> itemModelList = itemDOS.stream().map(itemDO -> {
+            ItemStockDO itemStockDO = itemStockDOMapper.selectByItemId(itemDO.getId());
+            ItemModel itemModel = covertFromDataObject(itemDO, itemStockDO);
+            return itemModel;
+        }).collect(Collectors.toList());
+        return itemModelList;
     }
 
     @Override
     public ItemModel getItemById(Integer itemId) {
-        if (itemId==null) {
+        if (itemId == null) {
             return null;
         }
         ItemDO itemDO = itemDOMapper.selectByPrimaryKey(itemId);
-        if (itemDO==null) {
+        if (itemDO == null) {
             return null;
         }
         //操作获得库存方法
@@ -96,9 +105,9 @@ public class ItemServiceImpl implements ItemService {
         return itemModel;
     }
 
-    private ItemModel covertFromDataObject(ItemDO itemDO,ItemStockDO itemStockDO){
+    private ItemModel covertFromDataObject(ItemDO itemDO, ItemStockDO itemStockDO) {
         ItemModel itemModel = new ItemModel();
-        BeanUtils.copyProperties(itemDO,itemModel);
+        BeanUtils.copyProperties(itemDO, itemModel);
         itemModel.setPrice(new BigDecimal(itemDO.getPrice()));
         itemModel.setStock(itemStockDO.getStock());
         return itemModel;

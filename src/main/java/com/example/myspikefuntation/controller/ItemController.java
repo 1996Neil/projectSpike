@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author wangzhe
@@ -55,15 +57,30 @@ public class ItemController extends BaseController {
 
     /**
      * 商品详情页浏览
-     *
+     *这里用@PathVariable注解 /get/{id}会发生值传递不到的错误
      * @param id 商品id
      * @return com.example.myspikefuntation.response.CommonResultType
      * @Date 21:10 2021/8/5
      **/
-    @GetMapping("/get/{id}")
-    public CommonResultType getItem(@PathVariable("id") Integer id) {
+    @GetMapping("/get")
+    public CommonResultType getItem(@RequestParam("id") Integer id) {
         ItemModel itemModel = itemService.getItemById(id);
         ItemVO itemVO = this.covertVOFromItemModel(itemModel);
         return CommonResultType.create(itemVO);
+    }
+    /**
+     * 按照销量列出所有的商品
+     * @Date 21:33 2021/8/5
+     * @return  com.example.myspikefuntation.response.CommonResultType
+     **/
+    @GetMapping("/list")
+    public CommonResultType listItem(){
+        List<ItemModel> itemModels = itemService.listItem();
+        //使用stream api将list内的itemModel转化为itemVO
+        List<ItemVO> itemVOList = itemModels.stream().map(itemModel -> {
+            ItemVO itemVO = covertVOFromItemModel(itemModel);
+            return itemVO;
+        }).collect(Collectors.toList());
+        return CommonResultType.create(itemVOList);
     }
 }

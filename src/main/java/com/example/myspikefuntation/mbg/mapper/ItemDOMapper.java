@@ -1,7 +1,10 @@
 package com.example.myspikefuntation.mbg.mapper;
 
 import com.example.myspikefuntation.mbg.dao.dataObject.ItemDO;
+import org.hibernate.validator.constraints.Mod11Check;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public interface ItemDOMapper {
@@ -52,4 +55,6 @@ public interface ItemDOMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(ItemDO record);
+
+    List<ItemDO> listItem();
 }
