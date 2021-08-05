@@ -27,7 +27,8 @@ public class ItemModel {
     @NotBlank(message = "商品名称不能为空")
     private String title;
     /**
-     * 商品价格
+     * 商品价格  这里用BigDecimal的原因是
+     * double在前端会有一个精度问题,可能一个1.9的对象会变成1.9999,对于我们来说是没有必要的
      **/
     @NotNull(message = "商品价格不能为空")
     @Min(value = 0,message = "商品价格不能为0")

@@ -19,6 +19,7 @@ public interface ItemService {
      * 创建商品
      * @param itemModel
      * @return
+     * @throws BusinessException
      */
     ItemModel createItem(ItemModel itemModel) throws BusinessException;
 
@@ -36,5 +37,5 @@ public interface ItemService {
      * @param itemId
      * @return  com.example.myspikefuntation.service.model.ItemModel
      **/
-    ItemModel getItem(Integer itemId);
+    ItemModel getItemById(Integer itemId);
 }
