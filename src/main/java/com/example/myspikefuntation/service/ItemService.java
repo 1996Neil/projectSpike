@@ -1,5 +1,6 @@
 package com.example.myspikefuntation.service;
 
+import com.example.myspikefuntation.error.BusinessException;
 import com.example.myspikefuntation.service.model.ItemModel;
 import org.hibernate.validator.constraints.time.DurationMax;
 
@@ -19,7 +20,7 @@ public interface ItemService {
      * @param itemModel
      * @return
      */
-    ItemModel createItem(ItemModel itemModel);
+    ItemModel createItem(ItemModel itemModel) throws BusinessException;
 
     /**
      * 商品列表浏览

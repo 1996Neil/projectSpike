@@ -58,12 +58,12 @@
 <!--        &lt;!&ndash;用来指定自动生成主键的属性，见mybaits入门到精通 P106&ndash;&gt;-->
 <!--        <generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
 <!--        </table>-->
-        <table tableName="item" domainObjectName="itemDO" enableCountByExample="false"
+        <table tableName="item" domainObjectName="ItemDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
-        <table tableName="item_stock" domainObjectName="itemStockDO" enableCountByExample="false"
+        <table tableName="item_stock" domainObjectName="ItemStockDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
