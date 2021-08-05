@@ -52,11 +52,21 @@
 <!--            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
 <!--        </table>-->
         <!--        去掉了mapper.xml里面一些复杂语句-->
-        <table tableName="user_password" domainObjectName="UserPasswordDO" enableCountByExample="false"
+<!--        <table tableName="user_password" domainObjectName="UserPasswordDO" enableCountByExample="false"-->
+<!--               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--               selectByExampleQueryId="false">-->
+<!--        &lt;!&ndash;用来指定自动生成主键的属性，见mybaits入门到精通 P106&ndash;&gt;-->
+<!--        <generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+<!--        </table>-->
+        <table tableName="item" domainObjectName="itemDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
-        <!--用来指定自动生成主键的属性，见mybaits入门到精通 P106-->
-        <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
+        </table>
+        <table tableName="item_stock" domainObjectName="itemStockDO" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
         </table>
     </context>
 </generatorConfiguration>
