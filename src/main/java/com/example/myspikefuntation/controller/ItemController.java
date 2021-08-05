@@ -6,7 +6,6 @@ import com.example.myspikefuntation.error.BusinessException;
 import com.example.myspikefuntation.response.CommonResultType;
 import com.example.myspikefuntation.service.ItemService;
 import com.example.myspikefuntation.service.model.ItemModel;
-import com.example.myspikefuntation.service.model.UserModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +29,7 @@ public class ItemController extends BaseController {
 
     @PostMapping(value = "/create", consumes = {CONTENT_TYPE_FORMED})
     public CommonResultType createItem(@RequestParam("title") String title,
-                                       @RequestParam("price")BigDecimal price,
+                                       @RequestParam("price") BigDecimal price,
                                        @RequestParam("stock") Integer stock,
                                        @RequestParam("description") String description,
                                        @RequestParam("imgUrl") String imgUrl) throws BusinessException {
@@ -44,13 +43,27 @@ public class ItemController extends BaseController {
         ItemModel itemModelForReturn = itemService.createItem(itemModel);
 
 
-        ItemVO itemVO = covertFromItemModel(itemModelForReturn);
+        ItemVO itemVO = covertVOFromItemModel(itemModelForReturn);
         return CommonResultType.create(itemVO);
     }
 
-    private ItemVO covertFromItemModel(ItemModel itemModel){
+    private ItemVO covertVOFromItemModel(ItemModel itemModel) {
         ItemVO itemVO = new ItemVO();
-        BeanUtils.copyProperties(itemModel,itemVO);
+        BeanUtils.copyProperties(itemModel, itemVO);
         return itemVO;
+    }
+
+    /**
+     * 商品详情页浏览
+     *
+     * @param id 商品id
+     * @return com.example.myspikefuntation.response.CommonResultType
+     * @Date 21:10 2021/8/5
+     **/
+    @GetMapping("/get/{id}")
+    public CommonResultType getItem(@PathVariable("id") Integer id) {
+        ItemModel itemModel = itemService.getItemById(id);
+        ItemVO itemVO = this.covertVOFromItemModel(itemModel);
+        return CommonResultType.create(itemVO);
     }
 }
