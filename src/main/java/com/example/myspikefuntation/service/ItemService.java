@@ -47,4 +47,6 @@ public interface ItemService {
      * @throws BusinessException
      **/
     boolean decreaseStock(Integer itemId,Integer amount)throws BusinessException;
+
+    void increaseSales(Integer itemId,Integer amount)throws BusinessException;
 }

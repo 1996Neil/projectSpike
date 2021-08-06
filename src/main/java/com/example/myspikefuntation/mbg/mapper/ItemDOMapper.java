@@ -1,6 +1,7 @@
 package com.example.myspikefuntation.mbg.mapper;
 
 import com.example.myspikefuntation.mbg.dao.dataObject.ItemDO;
+import org.apache.ibatis.annotations.Param;
 import org.hibernate.validator.constraints.Mod11Check;
 import org.springframework.stereotype.Component;
 
@@ -57,4 +58,7 @@ public interface ItemDOMapper {
     int updateByPrimaryKey(ItemDO record);
 
     List<ItemDO> listItem();
+
+    int increaseSales(@Param("id") Integer id,
+                      @Param("amount") Integer amount);
 }
