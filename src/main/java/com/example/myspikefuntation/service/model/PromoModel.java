@@ -17,6 +17,10 @@ public class PromoModel {
 
     private Integer id;
     /**
+     * 秒杀活动状态,1表示还未开始,2表示进行中,3表示已结束
+     **/
+    private Integer status;
+    /**
      * 秒杀名称
      **/
     private String promoName;
@@ -24,6 +28,10 @@ public class PromoModel {
      * 秒杀的开始时间
      **/
     private DateTime startTime;
+    /**
+     * 秒杀的结束时间
+     **/
+    private DateTime endTime;
     /**
      * 秒杀的商品名称
      **/

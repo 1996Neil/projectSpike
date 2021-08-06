@@ -1,6 +1,7 @@
 package com.example.myspikefuntation.controller.viewObject;
 
 import lombok.Data;
+import org.joda.time.DateTime;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -46,4 +47,20 @@ public class ItemVO {
      * 商品图片
      **/
     private String imgUrl;
+    /**
+     * 记录商品是否在秒杀活动中,以及对应的状态.0表示没有秒杀活动 1表示活动还未开始,2表示正在活动中
+     **/
+    private Integer promoStatus;
+    /**
+     * 开始时间,用来做倒计时
+     **/
+    private String startDate;
+    /**
+     * 活动ID
+     **/
+    private Integer promoId;
+    /**
+     * 秒杀价格
+     **/
+    private BigDecimal promoPrice;
 }

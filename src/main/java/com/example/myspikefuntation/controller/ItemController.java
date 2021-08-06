@@ -3,9 +3,12 @@ package com.example.myspikefuntation.controller;
 import com.example.myspikefuntation.controller.viewObject.BaseController;
 import com.example.myspikefuntation.controller.viewObject.ItemVO;
 import com.example.myspikefuntation.error.BusinessException;
+import com.example.myspikefuntation.mbg.dao.dataObject.PromoDO;
+import com.example.myspikefuntation.mbg.mapper.PromoDOMapper;
 import com.example.myspikefuntation.response.CommonResultType;
 import com.example.myspikefuntation.service.ItemService;
 import com.example.myspikefuntation.service.model.ItemModel;
+import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +31,8 @@ public class ItemController extends BaseController {
 
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private PromoDOMapper promoDOMapper;
 
     @PostMapping(value = "/create", consumes = {CONTENT_TYPE_FORMED})
     public CommonResultType createItem(@RequestParam("title") String title,
@@ -50,8 +55,20 @@ public class ItemController extends BaseController {
     }
 
     private ItemVO covertVOFromItemModel(ItemModel itemModel) {
+        if (itemModel==null) {
+            return null;
+        }
         ItemVO itemVO = new ItemVO();
         BeanUtils.copyProperties(itemModel, itemVO);
+        //有正在进行或即将进行的秒杀活动
+        if (itemModel.getPromoModel() != null) {
+            itemVO.setPromoStatus(itemModel.getPromoModel().getStatus());
+            itemVO.setPromoId(itemModel.getPromoModel().getId());
+            itemVO.setStartDate(itemModel.getPromoModel().getStartTime().toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")));
+            itemVO.setPromoPrice(itemModel.getPromoModel().getPromoItemPrice());
+        } else {
+            itemVO.setPromoStatus(0);
+        }
         return itemVO;
     }
 
@@ -82,5 +99,10 @@ public class ItemController extends BaseController {
             return itemVO;
         }).collect(Collectors.toList());
         return CommonResultType.create(itemVOList);
+    }
+    @GetMapping("/itemid")
+    public CommonResultType getitem(@RequestParam("id")Integer id){
+        PromoDO promoDO = promoDOMapper.selectByByItemId(id);
+        return CommonResultType.create(promoDO);
     }
 }

@@ -7,7 +7,9 @@ import com.example.myspikefuntation.mbg.dao.dataObject.ItemStockDO;
 import com.example.myspikefuntation.mbg.mapper.ItemDOMapper;
 import com.example.myspikefuntation.mbg.mapper.ItemStockDOMapper;
 import com.example.myspikefuntation.service.ItemService;
+import com.example.myspikefuntation.service.PromoService;
 import com.example.myspikefuntation.service.model.ItemModel;
+import com.example.myspikefuntation.service.model.PromoModel;
 import com.example.myspikefuntation.validator.ValidatorImpl;
 import com.example.myspikefuntation.validator.ValidatorResult;
 import org.springframework.beans.BeanUtils;
@@ -37,6 +39,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Autowired
     private ItemStockDOMapper itemStockDOMapper;
+    @Autowired
+    private PromoService promoService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -102,6 +106,11 @@ public class ItemServiceImpl implements ItemService {
         ItemStockDO itemStockDO = itemStockDOMapper.selectByItemId(itemId);
         //将dataObject转化成itemModel
         ItemModel itemModel = covertFromDataObject(itemDO, itemStockDO);
+        //获取活动商品信息
+        PromoModel promoModel = promoService.getPromoById(itemId);
+        if (promoModel!=null && promoModel.getStatus().intValue()!=3) {
+            itemModel.setPromoModel(promoModel);
+        }
         return itemModel;
     }
 
@@ -119,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void increaseSales(Integer itemId, Integer amount) throws BusinessException {
         itemDOMapper.increaseSales(itemId, amount);
     }
