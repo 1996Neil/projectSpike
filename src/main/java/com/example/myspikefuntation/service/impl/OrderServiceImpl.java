@@ -3,7 +3,9 @@ package com.example.myspikefuntation.service.impl;
 import com.example.myspikefuntation.error.BusinessException;
 import com.example.myspikefuntation.error.EmBusinessError;
 import com.example.myspikefuntation.mbg.dao.dataObject.OrderDO;
+import com.example.myspikefuntation.mbg.dao.dataObject.SequenceDO;
 import com.example.myspikefuntation.mbg.mapper.OrderDOMapper;
+import com.example.myspikefuntation.mbg.mapper.SequenceDOMapper;
 import com.example.myspikefuntation.service.ItemService;
 import com.example.myspikefuntation.service.OrderService;
 import com.example.myspikefuntation.service.UserService;
@@ -13,6 +15,7 @@ import com.example.myspikefuntation.service.model.UserModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -36,6 +39,8 @@ public class OrderServiceImpl implements OrderService {
     private UserService userService;
     @Autowired
     private OrderDOMapper orderDOMapper;
+    @Autowired
+    private SequenceDOMapper sequenceDOMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -65,12 +70,14 @@ public class OrderServiceImpl implements OrderService {
         orderModel.setItemPrice(itemModel.getPrice());
         orderModel.setOrderPrice(itemModel.getPrice().multiply(new BigDecimal(amount)));
         //生成交易流水号,订单号
+        orderModel.setId(generateOrderNo());
         OrderDO orderDO = this.covertFromOrderModel(orderModel);
         orderDOMapper.insertSelective(orderDO);
         //返回前端
-        return null;
+        return orderModel;
     }
-    private String generateOrderNo(){
+    @Transactional(propagation = Propagation.REQUIRES_NEW,rollbackFor = Exception.class)
+    public String generateOrderNo(){
         //订单号有16位
         StringBuilder stringBuilder = new StringBuilder();
         //前八位为时间信息,年月日
@@ -78,9 +85,23 @@ public class OrderServiceImpl implements OrderService {
         String nowDate = now.format(DateTimeFormatter.ISO_DATE).replace("-", "");
         stringBuilder.append(nowDate);
         //中间六位为自增序列
-
+        int sequence=0;
+        //查询当前sequence对象
+        SequenceDO sequenceDO = sequenceDOMapper.getSequenceByName("order_info");
+        //把sequence的当前值提取出来,之后再把值和步数相加在数据库中更新
+        sequence = sequenceDO.getCurrentValue();
+        sequenceDO.setCurrentValue(sequenceDO.getCurrentValue()+sequenceDO.getStep());
+        sequenceDOMapper.updateByPrimaryKeySelective(sequenceDO);
+        //当前值转化为字符串计算长度,不足位补正0
+        String sequenceStr = String.valueOf(sequence);
+        for(int i = 0; i < 6-sequenceStr.length(); i++) {
+            stringBuilder.append(0);
+        }
+        //000001
+        stringBuilder.append(sequenceStr);
         //最后两位为分库分表位
-        return null;
+        stringBuilder.append("00");
+        return stringBuilder.toString();
     }
 
     private OrderDO covertFromOrderModel(OrderModel orderModel){
@@ -89,6 +110,8 @@ public class OrderServiceImpl implements OrderService {
         }
         OrderDO orderDO = new OrderDO();
         BeanUtils.copyProperties(orderModel,orderDO);
+        orderDO.setItemPrice(orderModel.getItemPrice().doubleValue());
+        orderDO.setOrderPrice(orderModel.getOrderPrice().doubleValue());
         return orderDO;
     }
 }
