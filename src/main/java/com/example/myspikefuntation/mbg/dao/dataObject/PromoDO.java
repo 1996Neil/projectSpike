@@ -28,7 +28,7 @@ public class PromoDO implements Serializable {
     private Date startDate;
 
     /**
-     * 商品名称
+     * 商品id
      *
      * @mbg.generated
      * item_id

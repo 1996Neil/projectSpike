@@ -26,7 +26,7 @@ public class OrderModel {
      **/
     private Integer itemId;
     /**
-     * 商品单价
+     * 商品单价,若promoId非空,则表示是以秒杀商品方式下单
      **/
     private BigDecimal itemPrice;
     /**
@@ -34,9 +34,12 @@ public class OrderModel {
      **/
     private Integer amount;
     /**
-     * 订单金额
+     * 订单金额,若promoId非空,则表示是以秒杀商品方式下单
      **/
     private BigDecimal orderPrice;
-
+    /**
+     * 若非空,则表示是以秒杀商品方式下单,秒杀商品id
+     **/
+    private Integer promoId;
 
 }

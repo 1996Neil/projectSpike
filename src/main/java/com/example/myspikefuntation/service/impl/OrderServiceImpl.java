@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public OrderModel createOrder(Integer userId, Integer itemId, Integer amount) throws BusinessException {
+    public OrderModel createOrder(Integer userId, Integer itemId, Integer amount,Integer promoId) throws BusinessException {
         //1.校验下单状态,下单的商品是否存在,用户是否合法,购买数量是否正确
         ItemModel itemModel = itemService.getItemById(itemId);
         if (itemModel==null) {
@@ -57,6 +57,15 @@ public class OrderServiceImpl implements OrderService {
         if (amount<=0 || amount>99) {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR,"商品数量异常");
         }
+        if (promoId!=null) {
+            //(1)校验对应活动是否存在这个商品
+            if (promoId.intValue() != itemModel.getPromoModel().getId()) {
+                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "活动信息不正确");
+                //2校验活动是否正在进行中
+            } else if (itemModel.getPromoModel().getStatus().intValue()!=2){
+                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "活动还未开始");
+            }
+        }
         //2.落单减库存
         boolean result = itemService.decreaseStock(itemId, amount);
         if (!result) {
@@ -67,8 +76,14 @@ public class OrderServiceImpl implements OrderService {
         orderModel.setUserId(userId);
         orderModel.setItemId(itemId);
         orderModel.setAmount(amount);
-        orderModel.setItemPrice(itemModel.getPrice());
-        orderModel.setOrderPrice(itemModel.getPrice().multiply(new BigDecimal(amount)));
+        if (promoId!=null) {
+            orderModel.setItemPrice(itemModel.getPromoModel().getPromoItemPrice());
+        }else {
+            orderModel.setItemPrice(itemModel.getPrice());
+        }
+        //加入活动id
+        orderModel.setPromoId(promoId);
+        orderModel.setOrderPrice(orderModel.getItemPrice().multiply(new BigDecimal(amount)));
         //生成交易流水号,订单号
         orderModel.setId(generateOrderNo());
         OrderDO orderDO = this.covertFromOrderModel(orderModel);
