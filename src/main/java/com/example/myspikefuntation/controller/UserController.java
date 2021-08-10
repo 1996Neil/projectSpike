@@ -59,6 +59,7 @@ public class UserController extends BaseController {
                                      @RequestParam("password") String password) throws BusinessException, NoSuchAlgorithmException {
         //验证手机号和对应的otpCode相符合
         //因为我们在获取验证码的方法中把验证码存到了session中,所以这里我们通过session再取出来
+        //正常的业务逻辑肯定不是这样的,都是从redis中取,因为redis键值对形式存取方便,而且有值过期,适合验证码
         String inSessionOtpCode = (String) this.httpServletRequest.getSession().getAttribute(telephone);
         if (!StringUtils.equals(otpCode, inSessionOtpCode)) {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR, "短信验证码错误");
@@ -84,7 +85,12 @@ public class UserController extends BaseController {
         String newStr = base64.encode(md5.digest(str.getBytes(StandardCharsets.UTF_8)));
         return newStr;
     }
-
+    /**
+     * 用来测试的
+     * @Date 11:16 2021/8/9
+     * @param userId
+     * @return  com.example.myspikefuntation.response.CommonResultType
+     **/
     @RequestMapping("/get/{userId}")
     public CommonResultType home(@PathVariable Integer userId) throws BusinessException {
         //调用service服务获取对应id的用户对象并返回给前端
